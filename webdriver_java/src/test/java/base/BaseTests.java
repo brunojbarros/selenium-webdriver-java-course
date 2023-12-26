@@ -4,7 +4,8 @@ import com.google.common.io.Files;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+// import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 import pages.HomePage;
@@ -17,18 +18,31 @@ import java.io.IOException;
 
 public class BaseTests {
 
-    private EventFiringWebDriver driver;
+    private WebDriver driver;
     protected HomePage homePage;
 
     @BeforeClass
     public void setUp(){
+        /*
         var driverExtention = "";
         if(System.getenv("RUNNER_OS") != null) {
             driverExtention = "-linux";
         };
-        System.setProperty("webdriver.chrome.driver", "resources/chromedriver" + driverExtention);
+        System.setProperty("webdriver.chrome.driver", "resources/chromedriver.exe");
         driver = new EventFiringWebDriver(new ChromeDriver(getChromeOptions()));
         driver.register(new EventReporter());
+
+         */
+        System.setProperty("webdriver.chrome.driver", "resources/chromedriver.exe");
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--remote-allow-origins=*");
+        driver = new ChromeDriver(options);
+        DesiredCapabilities cap = new DesiredCapabilities();
+        cap.setCapability(ChromeOptions.CAPABILITY, options);
+        options.merge(cap);
+        driver.manage().window().maximize();
+
+        // return driver;
     }
 
     @BeforeMethod
